@@ -1,4 +1,4 @@
-# Hivemind — dossier de pilotage
+# Hivemind — dossier de pilot
 
 > Équipe : **[nom de l'équipe]** · Repo : `[pseudo/repo]` · Project : [lien GitHub Project]
 > Ce fichier est le `README.md` de votre repo. Il se remplit au fil du projet, section par section, au moment où le planning le demande. Pas la veille au soir.
