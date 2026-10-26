@@ -36,18 +36,20 @@
 
 *Ce qu'on attend : en quelques lignes, ce que veut le client, pour qui, avec quoi et sous quelles contraintes. Puis les 3 enjeux qui feront réussir ou échouer le projet.*
 
+Casey, lead dev dans une agence web lyonnaise, veut **Hivemind** : une application web locale (localhost Windows) permettant de piloter depuis une interface unique ses trois CLI d'IA (Claude Code, Codex CLI, Antigravity CLI) avec une mémoire commune synchronisée (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) sans API payante. Destinée aux développeurs de l'agence (prise en main immédiate sans formation), l'application est développée par une équipe de 3 à 4 personnes en zéro code manuel en vue d'un lancement public fixé au **15 décembre 2026**.
+
 | Rubrique | Ce que dit le brief (données précises) | Ce que ça implique pour nous |
 |---|---|---|
-| Objectifs du client | | |
-| Parties prenantes | | |
-| Ressources (humaines, IA, temps) | | |
-| Contraintes (techniques, délais, règles) | | |
+| Objectifs du client | Casey veut piloter 3 CLI (Claude Code, Codex CLI, Antigravity CLI) depuis une interface web locale sur son poste, partager une mémoire unique (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) sans copier-coller ni API payante, avec un MVP à la démo 1 (lundi 11h56) et une v1 au 15 décembre 2026. | Développer une interface web locale sous Windows orchestrant les sous-processus CLI sans API externe ; synchroniser fidèlement la mémoire centrale vers les 3 fichiers Markdown ; livrer le MVP (HM-01 à HM-04) dès le Sprint 1 (40 min) et prioriser la valeur sur les 20 features (111 pts). |
+| Parties prenantes | Casey (lead dev client/sponsor qui valide en direct sur démos réelles avec ses prompts) ; développeurs de l'agence (utilisateurs finaux, 0 formation, démarrage en 1 commande) ; équipe projet (3 ou 4 personnes : [À COMPLÉTER]) ; agents IA (Claude, Codex, Antigravity qui codent sans décider) ; sécurité de l'agence (aucune donnée locale ne sort du poste). | Valider chaque issue en conditions réelles sur le poste de démo devant Casey ; soigner le démarrage en une commande (HM-04) ; garder l'humain comme seul approbateur (A) face aux IA exécutantes (R) ; garantir un fonctionnement 100 % local et étanche sans fuite de données hors des abonnements existants. |
+| Ressources (humaines, IA, temps) | Équipe de 3 ou 4 personnes ([À COMPLÉTER]) tournant sur 4 rôles par sprint (pilote IA, relecteur-testeur, gardien du tableau, responsable produit) ; quotas IA personnels limités (Claude, ChatGPT, compte Google) ; 1 poste de démo avec ≥ 2 CLI connectées ([À COMPLÉTER]) ; 2 jours avec 3 sprints minutés (40 min, 75 min, 55 min = 2h50 au total). | Répartir strictement les rôles sans coder manuellement (100 % IA) ; surveiller les quotas IA pour ne pas perdre une ressource critique en plein sprint ; préparer le poste de démo désigné ([À COMPLÉTER]) dès le cadrage ; gérer le temps fixe strict (2h50) en ajustant le périmètre fonctionnel. |
+| Contraintes (techniques, délais, règles) | 100 % local sous Windows (localhost, abonnements existants de Casey, pas d'API payante) ; zéro ligne de code écrite à la main (une ligne manuelle = feature annulée) ; toute feature tracée par une issue GitHub fermée après relecture humaine ; gestion des revirements client (cartes événement) ; v1 au 15 décembre 2026. | Piloter les agents IA par des prompts précis et relire tout le code produit avant validation ; gérer proprement les flux stdin/stdout des CLI sous Windows sans blocage ; prévoir l'absorption des cartes événement (lundi 14h40/15h00 et mardi 10h12) sans déborder du planning. |
 
 | # | Enjeu principal | Pourquoi c'est critique (donnée du brief) |
 |---|---|---|
-| 1 | | |
-| 2 | | |
-| 3 | | |
+| 1 | Pilotage local fiable des 3 CLI sous Windows sans blocage ni code manuel | Casey exige d'exécuter Claude Code, Codex et Antigravity depuis la page web sans API payante. L'interfaçage de processus CLI en direct sous Windows (gestion des flux stdin/stdout, mode non interactif, risque de blocage ou sessions imbriquées type `claude -p`) doit fonctionner en démo live alors que l'équipe a interdiction absolue de retoucher le code à la main. |
+| 2 | Intégrité et synchronisation de la mémoire partagée (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) | C'est le cœur du besoin de Casey pour ne plus réexpliquer trois fois son contexte. La synchronisation (HM-07, 8 pts de valeur) est vérifiée en direct par le client : une information écrite dans Hivemind doit être citée par au moins 2 CLI connectées sur le poste de démo ([À COMPLÉTER]), sans écraser le contenu manuel existant. |
+| 3 | Maîtrise du temps fixe (2h50 en 3 sprints) et des quotas IA face aux revirements client | Le backlog comporte 20 features pour 111 pts, le temps est figé à 2h50 avec 2 cartes événement imprévues (lundi 14h40 et mardi 10h12) et des quotas d'IA personnels limités. Tout dépassement ou panne de quota compromet la démo live devant Casey, où une feature incomplète vaut 0 point. |
 
 ---
 
@@ -57,10 +59,10 @@
 
 | Phase | Objectif | Livrables | Critère de sortie (on passe à la suite quand…) |
 |---|---|---|---|
-| Conception | | | |
-| Développement | | | |
-| Tests | | | |
-| Déploiement | | | |
+| Conception | Cadrer l'architecture locale d'Hivemind sous Windows (orchestration de Claude Code, Codex CLI et Antigravity CLI sans API payante), définir le schéma de la mémoire partagée (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`) et initialiser le GitHub Project avec les 20 issues valorisées (111 pts). | GitHub Project configuré avec backlog priorisé (MoSCoW), dossier de pilotage initialisé (§1, §2, §6 et A complétés) et spécification d'architecture locale (serveur local et exécution des CLI). | Backlog validé sur GitHub avec les 4 issues du MVP (HM-01 à HM-04) prêtes pour le Sprint 1, et poste de démo ([À COMPLÉTER]) configuré avec au moins 2 CLI connectées. |
+| Développement | Générer par prompts IA exclusifs (zéro code manuel) les fonctionnalités d'Hivemind : exécution des CLI en sous-processus, persistance locale de l'historique (JSON/SQLite), interface web localhost et module de synchronisation de la mémoire partagée. | Code source complet d'Hivemind versionné sur GitHub (backend d'orchestration CLI, interface web localhost, synchroniseur de mémoire) et issues associées fermées. | Code de chaque feature généré par IA relu par un humain (nom tracé dans l'issue) et application démarrable en une commande (HM-04). |
+| Tests | Valider sur le poste de démo Windows l'intégration live des CLI connectées (réponse réelle aux prompts libres, persistance de l'historique et prise en compte du contexte partagé) sans plantage ni processus orphelin. | Cahier de recette consignant les critères d'acceptation validés pour chaque issue, et journal de bord des démos avec preuves de fonctionnement des CLI connectées. | 100 % des critères d'acceptation du sprint vérifiés en direct sur le poste de démo ([À COMPLÉTER]) avec au moins 2 CLI connectées sans erreur bloquante. |
+| Déploiement | Mettre à disposition l'application Hivemind opérationnelle en local (démo notée devant Casey mardi 11h50 puis version livrable pour le lancement public du 15 décembre 2026) avec documentation de lancement autonome en une commande (HM-04). | Release GitHub d'Hivemind étiquetée, section §0 du README documentée (commande unique de lancement, URL `http://127.0.0.1:...`, prérequis) et démo live validée devant Casey. | Démonstration en direct validée par Casey avec un prompt de son choix sans plantage, et confirmation du score de valeur livrée sur GitHub Projects. |
 
 ---
 
@@ -158,9 +160,10 @@ Vue Roadmap : [lien]
 
 | ◆ Jalon | Date | Critère de passage | Livrable vérifié | Qui valide (A) |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
+| J1 - Validation du cadrage et de l'architecture Hivemind (Phase Conception) | Lundi matin [À COMPLÉTER] | Décision Go Développement ? : Validé si le GitHub Project est configuré avec les 20 issues valorisées (111 pts), l'architecture locale sans API payante est définie, et au moins 2 CLI sont connectées sur le poste de démo ([À COMPLÉTER]). Sinon No-Go. | Backlog GitHub Project initialisé (MoSCoW), dossier de pilotage rempli (§1, §2, §6, A) et poste de démo prêt. | Responsable produit ([À COMPLÉTER]) |
+| J2 - Fin de développement du MVP Hivemind (Phase Développement) | Lundi 11h45 [À COMPLÉTER] | Décision Go Tests ? : Validé si les 4 features Must (HM-01, HM-02, HM-03, HM-04) sont 100 % générées par IA (zéro code manuel) avec relecture humaine tracée dans chaque issue. Sinon No-Go. | Code source Hivemind sur le repo GitHub avec serveur local, connecteurs CLI, historique et commande de lancement (HM-04). | Relecteur-testeur ([À COMPLÉTER]) |
+| J3 - Recette technique et validation de la démo live (Phase Tests) | Lundi 11h56 (Démo 1) & Mardi 11h31 (Démo finale) [À COMPLÉTER] | Décision Go Déploiement / Démo ? : Validé si au moins 2 CLI connectées répondent avec succès à un prompt réel sur le poste de démo ([À COMPLÉTER]), avec persistance de l'historique (HM-03) et synchronisation mémoire (HM-07). Sinon No-Go. | Démonstration live fonctionnelle sur localhost devant Casey et cahier de recette des critères d'acceptation validé. | Relecteur-testeur ([À COMPLÉTER]) |
+| J4 - Clôture des sprints et Release v1 Hivemind (Phase Déploiement) | Mardi 11h50 (Démo notée) & 15 décembre 2026 (Lancement v1) | Décision Go Lancement public ? : Validé si la démo live réussit devant Casey avec un prompt libre sur le poste de démo ([À COMPLÉTER]), README §0 documenté pour installation autonome et valeur client actée. Sinon No-Go. | Application Hivemind opérationnelle en 1 commande, README §0 complet et release v1 étiquetée sur GitHub. | Casey (lead dev / client) |
 
 ---
 
@@ -202,12 +205,21 @@ Insights : [lien ou capture]
 
 | Critère du contexte | Notre situation (donnée) | Ce que ça favorise |
 |---|---|---|
-| Taille et composition de l'équipe | | |
-| Durée et rythme | | |
-| Incertitude technique | | |
-| Disponibilité du client | | |
+| Taille et composition de l'équipe | 3 ou 4 personnes ([À COMPLÉTER]) avec 4 rôles tournants par sprint (pilote IA, relecteur-testeur, gardien du tableau, responsable produit) pilotant des agents IA sans taper de code à la main. | Une organisation agile légère sans surcharge managériale, où chaque rôle est dédié à fluidifier le cycle : rédaction de prompt IA -> relecture humaine du code -> traçabilité GitHub. |
+| Durée et rythme | 2 jours d'atelier découpés en 3 sprints très courts (Sprint 1 : 40 min, Sprint 2 : 75 min, Sprint 3 : 55 min = 2h50 au total) avec démos intermédiaires (lundi 11h56, mardi 11h50) et lancement v1 fixé au 15 décembre 2026. | Un rythme itératif cadencé en timeboxing strict (Scrum allégé) combiné à un jalonnement global par étapes (cadre hybride) pour sécuriser la trajectoire de livraison de la v1. |
+| Incertitude technique | Orchestration locale sous Windows de 3 CLI d'IA aux fonctionnements hétérogènes sans API payante, quotas IA personnels limités, interdiction absolue de coder à la main. | Des cycles courts d'expérimentation permettant de tester immédiatement les fonctions critiques (MVP HM-01 à HM-04) en démo live avant d'aborder les features plus complexes (HM-07, HM-13). |
+| Disponibilité du client | Casey est présent en direct lors des démos pour tester l'appli avec ses propres prompts et déclenche des événements impromptus (cartes événement lundi 14h40 et mardi 10h12). | Des rituels de feedback direct (démo, négociation) et un backlog ajustable en continu pour réarbitrer le périmètre à chaque fin de sprint selon les réactions réelles du client. |
 
-**Méthode retenue** : … **Parce que** : … **Ce qu'on abandonne de la méthode et pourquoi** : …
+**Méthode retenue** : Scrum allégé dans un cadre hybride.
+
+**Parce que** :
+1. **Équipe restreinte et temps ultra-court (3 à 4 personnes sur 2 jours)** : avec 2h50 de temps de développement effectif découpées en 3 sprints minutés (40, 75 et 55 min), le découpage Scrum impose un timeboxing rigoureux qui pousse l'équipe à délivrer des incréments immédiatement testables plutôt que de concevoir des plans théoriques.
+2. **Client réactif et vivant qui change d'avis en cours de route** : Casey évalue le projet sur des démos réelles avec ses prompts et impose des perturbations majeures via les cartes événement (lundi 14h40 et mardi 10h12) ; l'approche agile permet d'ajuster le périmètre à chaque sprint en re-priorisant les 20 features (111 pts) sans compromettre le reste du projet.
+3. **Date de lancement public fixe au 15 décembre 2026** : le cadre hybride (jalonnement prédictif avec dates cibles et jalons Go/No-Go) est indispensable pour structurer la trajectoire et garantir le respect de l'échéance finale ferme du 15 décembre 2026, tout en conservant l'agilité itérative au quotidien.
+
+**Pourquoi pas le Cycle en V, SAFe et Kanban ?** : Le Cycle en V est inadapté car trop rigide face aux cartes événement de Casey et aux ajustements de périmètre en 2 jours ; SAFe est disproportionné car conçu pour coordonner des centaines de personnes là où nous sommes 3 ou 4 ; et Kanban pur est écarté car son flux continu sans timebox strict ne garantit pas la livraison d'un incrément fonctionnel aux heures fixes des démos (lundi 11h56 et mardi 11h50).
+
+**Ce qu'on abandonne de la méthode et pourquoi** : Les cérémonies Scrum lourdes (Sprint Planning exhaustif, Daily formel de 15 min, poker planning complexe) sont abandonnées au profit de synchronisations flash et de rétrospectives de 5 minutes, afin de maximiser le temps utile dédié à prompter et relire le code généré par les IA.
 
 ---
 
