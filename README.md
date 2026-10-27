@@ -1,6 +1,6 @@
 # Hivemind — dossier de pilotage
 
-> Équipe : **[nom de l'équipe]** · Repo : `[pseudo/repo]` · Project : [lien GitHub Project]
+> Équipe : **[Dream Team]** · Repo : `[assogo/hivemind]` · Project : [http://127.0.0.1:3000]
 > Ce fichier est le `README.md` de votre repo. Il se remplit au fil du projet, section par section, au moment où le planning le demande. Pas la veille au soir.
 > Mardi 11h50, il est le support de votre **démo de pilotage notée** (6 min de pilotage, 1 min d'appli, 5 min de questions individuelles).
 
