@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hivemind — Orchestrateur Multi-CLI IA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Header principal -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">🧠</div>
+        <div>
+          <h1 class="logo-title">Hivemind</h1>
+          <p class="logo-subtitle">Poste local • OpenCode (DeepSeek) • Codex • Antigravity</p>
+        </div>
+      </div>
+
+      <!-- Statuts CLI & Dossier de travail -->
+      <div class="header-center">
+        <div class="cli-status-badges" id="cliBadges">
+          <span class="cli-badge" id="badge-agy" title="Antigravity CLI">
+            <span class="status-dot"></span> Antigravity <span class="badge-ver">…</span>
+          </span>
+          <span class="cli-badge" id="badge-codex" title="Codex CLI">
+            <span class="status-dot"></span> Codex <span class="badge-ver">…</span>
+          </span>
+          <span class="cli-badge" id="badge-opencode" title="OpenCode (DeepSeek)">
+            <span class="status-dot"></span> OpenCode <span class="badge-ver">…</span>
+          </span>
+        </div>
+        <div class="workdir-picker" title="Dossier de travail pour l'exécution des CLI">
+          <span class="workdir-icon">📁</span>
+          <input type="text" id="workdirInput" placeholder="Dossier de travail (C:\...)" spellcheck="false" />
+        </div>
+      </div>
+
+      <!-- Actions rapides & Thème -->
+      <div class="header-right">
+        <!-- Compteurs d'usage du jour (HM-16) -->
+        <div class="usage-summary" id="usageSummary" title="Requêtes envoyées aujourd'hui">
+          <span class="usage-pill">⚡ Agy: <b id="cnt-agy">0</b></span>
+          <span class="usage-pill">⚡ Codex: <b id="cnt-codex">0</b></span>
+          <span class="usage-pill">⚡ OpenCode: <b id="cnt-opencode">0</b></span>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggleBtn" title="Basculer thème clair/sombre (HM-20)">🌙</button>
+      </div>
+    </header>
+
+    <!-- Navigation par onglets -->
+    <nav class="app-nav">
+      <button class="nav-tab active" data-tab="tab-chat">💬 Console & Prompt</button>
+      <button class="nav-tab" data-tab="tab-compare">⚖️ Mode Comparer</button>
+      <button class="nav-tab" data-tab="tab-memory">🧠 Mémoire Centrale</button>
+      <button class="nav-tab" data-tab="tab-history">📜 Historique</button>
+      <button class="nav-tab" data-tab="tab-library">📚 Bibliothèque</button>
+    </nav>
+
+    <!-- Conteneur de contenu -->
+    <main class="app-content">
+
+      <!-- ================= ONGLET 1 : CHAT & PROMPT ================= -->
+      <section id="tab-chat" class="tab-pane active">
+        <div class="chat-container">
+          
+          <!-- Carte de saisie du prompt -->
+          <div class="card prompt-card">
+            <div class="card-header">
+              <div class="cli-selector-group">
+                <label for="cliSelect"><strong>Cible :</strong></label>
+                <select id="cliSelect" class="form-select">
+                  <option value="agy">Antigravity CLI (agy)</option>
+                  <option value="codex">Codex CLI (codex)</option>
+                  <option value="opencode">OpenCode (opencode)</option>
+                </select>
+              </div>
+
+              <div class="prompt-tools">
+                <select id="quickLibrarySelect" class="form-select-sm">
+                  <option value="">⚡ Insérer un prompt favori…</option>
+                </select>
+                <button id="clearPromptBtn" class="btn btn-sm btn-ghost" title="Effacer le texte">Vider</button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <textarea id="promptInput" rows="4" class="form-textarea" placeholder="Tapez votre prompt ici… (Ctrl+Entrée pour envoyer)" autofocus></textarea>
+            </div>
+
+            <div class="card-footer">
+              <div class="prompt-actions-left">
+                <!-- Indicateur d'état et minuteur (HM-10) -->
+                <div id="requestStatus" class="status-indicator idle">
+                  <span class="spinner"></span>
+                  <span id="statusText">Prêt</span>
+                  <span id="statusTimer" class="status-timer"></span>
+                </div>
+              </div>
+
+              <div class="prompt-actions-right">
+                <button id="cancelBtn" class="btn btn-danger" style="display: none;">⛔ Annuler</button>
+                <button id="sendBtn" class="btn btn-primary">🚀 Envoyer le prompt</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte d'affichage de la réponse (HM-01, HM-09, HM-11) -->
+          <div class="card response-card" id="responseCard">
+            <div class="card-header">
+              <div class="response-meta">
+                <span class="response-cli-tag" id="responseCliTag">En attente</span>
+                <span class="response-time" id="responseTime"></span>
+              </div>
+              <div class="response-actions">
+                <button id="copyResponseBtn" class="btn btn-sm btn-secondary" title="Copier tout le texte">📋 Copier</button>
+                <button id="relayBtn" class="btn btn-sm btn-secondary" title="Envoyer comme prompt à une autre IA (HM-15)">🔀 Relayer</button>
+                <button id="exportMdBtn" class="btn btn-sm btn-secondary" title="Exporter en Markdown (HM-19)">💾 Export .md</button>
+              </div>
+            </div>
+            
+            <div class="card-body response-content" id="responseBody">
+              <div class="response-placeholder">
+                <p>💡 Saisissez un prompt ci-dessus pour interroger votre CLI en direct.</p>
+                <p><small>La réponse s'affiche en streaming avec coloration du code et boutons copier.</small></p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= ONGLET 2 : MODE COMPARER (HM-13) ================= -->
+      <section id="tab-compare" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Mode « Comparer » en parallèle (HM-13)</h2>
+              <p class="subtitle">Envoyez le même prompt simultanément aux CLI sélectionnées et comparez leurs réponses côte à côte.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="compare-controls">
+              <label><input type="checkbox" id="cmp-agy" checked> Antigravity</label>
+              <label><input type="checkbox" id="cmp-codex" checked> Codex</label>
+              <label><input type="checkbox" id="cmp-opencode"> OpenCode</label>
+            </div>
+            <textarea id="comparePromptInput" rows="3" class="form-textarea" placeholder="Prompt de comparaison à envoyer en parallèle…"></textarea>
+            <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+              <button id="runCompareBtn" class="btn btn-primary">⚖️ Lancer le comparatif</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-grid" id="compareGrid">
+          <div class="compare-column" id="col-agy">
+            <div class="compare-col-header">
+              <h3>Antigravity</h3>
+              <span class="col-meta" id="meta-agy">-</span>
+            </div>
+            <div class="compare-col-body" id="body-agy">En attente de lancement…</div>
+          </div>
+          <div class="compare-column" id="col-codex">
+            <div class="compare-col-header">
+              <h3>Codex</h3>
+              <span class="col-meta" id="meta-codex">-</span>
+            </div>
+            <div class="compare-col-body" id="body-codex">En attente de lancement…</div>
+          </div>
+          <div class="compare-column" id="col-opencode">
+            <div class="compare-col-header">
+              <h3>OpenCode</h3>
+              <span class="col-meta" id="meta-opencode">-</span>
+            </div>
+            <div class="compare-col-body" id="body-opencode">Non sélectionné</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ONGLET 3 : MÉMOIRE CENTRALE (HM-06 & HM-07) ================= -->
+      <section id="tab-memory" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Mémoire Centrale Partagée (HM-06)</h2>
+              <p class="subtitle">Ce contexte est partagé par toutes les IA pour éviter de réexpliquer le projet à chaque échange.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button id="saveMemoryBtn" class="btn btn-secondary">💾 Enregistrer</button>
+              <button id="syncMemoryBtn" class="btn btn-primary">🔄 Synchroniser vers AGENTS.md, GEMINI.md (HM-07)</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="syncFeedback" class="alert-box" style="display: none;"></div>
+            <textarea id="memoryInput" rows="18" class="form-textarea code-font" placeholder="# Contexte du projet..."></textarea>
+          </div>
+          <div class="card-footer">
+            <small>Cible de synchronisation : <code id="memorySyncDir">...</code></small>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ONGLET 4 : HISTORIQUE (HM-03 & HM-18) ================= -->
+      <section id="tab-history" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Historique local des échanges (HM-03)</h2>
+              <p class="subtitle">Persisté automatiquement dans <code>data/history.json</code>.</p>
+            </div>
+            <div class="history-header-actions">
+              <input type="text" id="historySearchInput" class="form-input-sm" placeholder="🔍 Rechercher dans les échanges..." />
+              <button id="clearHistoryBtn" class="btn btn-sm btn-danger">🗑️ Vider l'historique</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="historyList" class="history-list">
+              <p class="empty-state">Chargement de l'historique…</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ONGLET 5 : BIBLIOTHÈQUE DE PROMPTS (HM-17) ================= -->
+      <section id="tab-library" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Bibliothèque de Prompts (HM-17)</h2>
+              <p class="subtitle">Enregistrez et réutilisez en un clic vos prompts favoris.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Formulaire d'ajout -->
+            <form id="addPromptForm" class="add-prompt-form">
+              <input type="text" id="newPromptTitle" class="form-input" placeholder="Titre (ex: Revue de sécurité)" required />
+              <textarea id="newPromptText" rows="2" class="form-textarea" placeholder="Contenu du prompt..." required></textarea>
+              <button type="submit" class="btn btn-primary">➕ Ajouter à la bibliothèque</button>
+            </form>
+            <hr class="separator" />
+            <!-- Liste des prompts -->
+            <div id="libraryList" class="library-grid"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal de confirmation de synchronisation avec avertissement (HM-07) -->
+  <div id="confirmModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <h3 class="modal-title">⚠️ Avertissement de synchronisation</h3>
+      <p id="confirmModalMsg">Des fichiers existants contiennent des modifications manuelles. Voulez-vous les écraser ?</p>
+      <div class="modal-actions">
+        <button id="modalCancelBtn" class="btn btn-secondary">Annuler</button>
+        <button id="modalForceBtn" class="btn btn-danger">Écraser et synchroniser</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
